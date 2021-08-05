@@ -13,17 +13,14 @@ import "./App.css";
 import type { GraphQLSchema } from "graphql";
 
 function fetcher(params: Object): Object {
-  return fetch(
-    "https://serve.onegraph.com/dynamic?app_id=c333eb5b-04b2-4709-9246-31e18db397e1",
-    {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(params)
-    }
-  )
+  return fetch("https://api.opensea.io/graphql/", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  })
     .then(function(response) {
       return response.text();
     })
@@ -36,7 +33,9 @@ function fetcher(params: Object): Object {
     });
 }
 
-const DEFAULT_QUERY = `# shift-option/alt-click on a query below to jump to it in the explorer
+const DEFAULT_QUERY = "";
+
+const OLD_DEFAULT_QUERY = `# shift-option/alt-click on a query below to jump to it in the explorer
 # option/alt-click on a field in the explorer to select all subfields
 query npmPackage {
   npm {
@@ -80,7 +79,7 @@ fragment bundlephobiaInfo on BundlephobiaDependencyInfo {
 type State = {
   schema: ?GraphQLSchema,
   query: string,
-  explorerIsOpen: boolean
+  explorerIsOpen: boolean,
 };
 
 class App extends Component<{}, State> {
@@ -89,12 +88,12 @@ class App extends Component<{}, State> {
 
   componentDidMount() {
     fetcher({
-      query: getIntrospectionQuery()
-    }).then(result => {
+      query: getIntrospectionQuery(),
+    }).then((result) => {
       const editor = this._graphiql.getQueryEditor();
       editor.setOption("extraKeys", {
         ...(editor.options.extraKeys || {}),
-        "Shift-Alt-LeftClick": this._handleInspectOperation
+        "Shift-Alt-LeftClick": this._handleInspectOperation,
       });
 
       this.setState({ schema: buildClientSchema(result.data) });
@@ -117,12 +116,12 @@ class App extends Component<{}, State> {
     var end = { line: mousePos.line, ch: token.end };
     var relevantMousePos = {
       start: cm.indexFromPos(start),
-      end: cm.indexFromPos(end)
+      end: cm.indexFromPos(end),
     };
 
     var position = relevantMousePos;
 
-    var def = parsedQuery.definitions.find(definition => {
+    var def = parsedQuery.definitions.find((definition) => {
       if (!definition.loc) {
         console.log("Missing location information for definition");
         return false;
@@ -173,7 +172,7 @@ class App extends Component<{}, State> {
           schema={schema}
           query={query}
           onEdit={this._handleEditQuery}
-          onRunOperation={operationName =>
+          onRunOperation={(operationName) =>
             this._graphiql.handleRunQuery(operationName)
           }
           explorerIsOpen={this.state.explorerIsOpen}
@@ -182,7 +181,7 @@ class App extends Component<{}, State> {
           makeDefaultArg={makeDefaultArg}
         />
         <GraphiQL
-          ref={ref => (this._graphiql = ref)}
+          ref={(ref) => (this._graphiql = ref)}
           fetcher={fetcher}
           schema={schema}
           query={query}

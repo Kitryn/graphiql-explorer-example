@@ -87,17 +87,18 @@ class App extends Component<{}, State> {
   state = { schema: null, query: DEFAULT_QUERY, explorerIsOpen: true };
 
   componentDidMount() {
-    fetcher({
-      query: getIntrospectionQuery(),
-    }).then((result) => {
-      const editor = this._graphiql.getQueryEditor();
-      editor.setOption("extraKeys", {
-        ...(editor.options.extraKeys || {}),
-        "Shift-Alt-LeftClick": this._handleInspectOperation,
-      });
+    // fetcher({
+    //   query: getIntrospectionQuery(),
+    // }).then((result) => {
+    //   const editor = this._graphiql.getQueryEditor();
+    //   editor.setOption("extraKeys", {
+    //     ...(editor.options.extraKeys || {}),
+    //     "Shift-Alt-LeftClick": this._handleInspectOperation,
+    //   });
 
-      this.setState({ schema: buildClientSchema(result.data) });
-    });
+    //   this.setState({ schema: buildClientSchema(result.data) });
+    // });
+    this.setState({schema: buildClientSchema(require("./opensea_schema.json"))})
   }
 
   _handleInspectOperation = (
